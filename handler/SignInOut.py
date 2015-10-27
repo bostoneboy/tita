@@ -20,6 +20,7 @@ from salt.client.ssh.client import SSHClient
 
 from logd import logger
 from readConfig import *
+reload(readConfig)
 from method.definex import *
 
 
