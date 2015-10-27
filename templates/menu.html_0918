@@ -1,0 +1,21 @@
+<div id="menu">
+
+{% for j in MENUDICT %}
+  {% if MENUDICT[j].keys()[0] in PERMISSION or PERMISSION[0] == 'All' %}
+    <h2>{{MENUDICT[j].keys()[0]}}</h2>
+    <ul>
+      {% for k in MENUDICT[j] %}
+        {% for l in MENUDICT[j][k] %}
+          {% if FLAGID == MENUDICT[j][k][l] %}
+      	<li><a href="/welcome/{{MENUDICT[j][k][l]}}"><b>{{l}}</b></a></li>
+          {% else %}
+      	<li><a href="/welcome/{{MENUDICT[j][k][l]}}">{{l}}</a></li>
+          {% end %}
+        {% end %}
+      {% end %}
+    </ul>
+  {% end %}
+{% end %}
+
+</div>
+

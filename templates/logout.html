@@ -1,0 +1,27 @@
+<div id="logout">
+
+<!--
+<a href="/Signout?signout=1">{{current_user}}&nbsp;&nbsp;登出</a>
+
+<form action="/Signout?signout=2">
+  <button type="submit" class="btn btn-default btn-xs" >
+    <span class="glyphicon glyphicon-user"></span>&nbsp;{{current_user}}&nbsp;登出 
+  </button>
+</form>
+-->
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"> 
+      <span class="glyphicon glyphicon-user"></span>
+      {{current_user}}
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu btn-xs">
+      <li font-size:12px;><a href="/Signout?signout=2" font-size:12px;>登出</a></li>
+    </ul>
+  </div>
+
+
+
+
+</div>

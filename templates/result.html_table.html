@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+{% include 'header.html' %}
+
+<body>
+
+<div id="container">
+{% include 'menu.html' %}
+
+<div id="content">
+  <h2>You command is：</h2>
+  <p>{{SALTCOMMAND}}</p>
+
+  <h2>The result is：</h2>
+  {% if isinstance(SALTRESULT,dict) %}
+    <table width="1000" border="1">
+ <tr>
+  <th>Host</th>
+  <th>ID</th>
+  <th>Function</th>
+  <th>Result</th>
+  <th>Comment</th>
+ </tr>
+ <tr>
+
+      {% for HOST in SALTRESULT %}
+      <tr>
+        <th>{{HOST}}</th>
+        {% for IDS in SALTRESULT[HOST] %}
+            <th align="left">{{IDS.split('_|-')[0] + '.' + IDS.split('_|-')[-1]}}</th>
+            <th align="left">{{IDS.split('_|-')[1]}}</th>
+            <th align="left">{{SALTRESULT[HOST][IDS]['result']}}</th>
+            <th align="left">{{SALTRESULT[HOST][IDS]['comment']}}</th>
+        {% end %}
+      </tr>
+      {% end %}
+    </table>
+
+  {% elif isinstance(SALTRESULT,list) %}
+     <p> fill it later</p>
+  {% end %}
+
+</div>
+{% include 'footer.html' %}
+</div>
+
+</body>
+</html>
+

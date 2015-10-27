@@ -1,0 +1,18 @@
+    {% for j in MENUDICT %}
+      {% if MENUDICT[j].keys()[0] in PERMISSION or PERMISSION[0] == 'All' %}
+        <li>
+          <a href="#"><i class="fa fa-tv fa-fw"></i> {{MENUDICT[j].keys()[0]}}</a>
+          <ul class="nav nav-second-level">
+          {% for k in MENUDICT[j] %}
+            {% for l in MENUDICT[j][k] %}
+              {% if FLAGID == MENUDICT[j][k][l] %}
+          	<li><a href="/ops/{{MENUDICT[j][k][l]}}"><b>{{l}}</b></a></li>
+              {% else %}
+          	<li><a href="/ops/{{MENUDICT[j][k][l]}}">{{l}}</a></li>
+              {% end %}
+            {% end %}
+          {% end %}
+          </ul>
+        </li>
+      {% end %}
+    {% end %}
