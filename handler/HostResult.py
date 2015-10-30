@@ -39,7 +39,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
         if id == 'server_initialization':
           PACKAGE = self.get_argument('package')
 	  PACKAGE_LINE = [i.split() for i in PACKAGE.encode('utf-8').split('\r\n')]
-	  logger.debug('PACKAGE_LINE: %s',PACKAGE_LINE)
+	  logger.debug('%s, PACKAGE_LINE: %s',username,PACKAGE_LINE)
     	  SALTCMD = 'Host Initialization'
 	  SALT_FUN = 'host.init'
 
@@ -55,7 +55,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	      SALTRET.append({j:1})
 	    else:
 	      SALTRET.append({j:0})
-	  logger.debug('SALTRET: %s',SALTRET)
+	  logger.debug('%s, SALTRET: %s',username,SALTRET)
 	  if ecount > 0:
 	     SALTRET[0] = '下列标红的行所提供之信息不完整，请修正后重新提交: '
 	     self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
@@ -75,7 +75,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	            PACKAGE_DICT[ELMENT[1]] = {'host': ELMENT[0],'user':USER,'passwd':PASS,'port':22}
 	            HOSTNAME_DICT[ELMENT[0]] = ELMENT[1]
 	            PACKAGE_YAML = yaml.dump(PACKAGE_DICT)
-                    logger.debug('PACKAGE_YAML: %s',PACKAGE_YAML)
+                    logger.debug('%s, PACKAGE_YAML: %s',username,PACKAGE_YAML)
 	            ROSTER_FD = open(ROSTER_CONF,'w')
 	            ROSTER_FD.write(PACKAGE_YAML)
 	            ROSTER_FD.close()
@@ -87,22 +87,22 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 		      PACKAGE_DICT[hosty]['user'] = 'ubuntu'
 	        
 	
-              logger.debug('PACKAGE_DICT: %s',PACKAGE_DICT)
+              logger.debug('%s, PACKAGE_DICT: %s',username,PACKAGE_DICT)
 	      TARGET = ','.join([i for i in HOSTNAME_DICT.values()])
 
 	      ## 验证ssh的用户密码是否正确
 	      SALTSSH_RETFILE = '.saltsshret_' + str(time.time())
 
 	      retb = LoginVirifi(PACKAGE_DICT) 
-	      logger.debug('The result of LoginVirifi: %s',retb)
+	      logger.debug('%s, The result of LoginVirifi: %s',username,retb)
 	      retc = sum(retb.values())
 	      if retc == 0:
 	          ret_usertype = ret_usertype - 1
-	          logger.debug('All host LoginVirifi success,ret_usertype: %s',ret_usertype)
+	          logger.debug('%s, All host LoginVirifi success,ret_usertype: %s',username,ret_usertype)
 	          break 
 	      else:
 	          ret_usertype = 1
-	          logger.debug('All or part of host LoginVirifi fail,ret_usertype: %s',ret_usertype)
+	          logger.debug('%s, All or part of host LoginVirifi fail,ret_usertype: %s',username,ret_usertype)
 	          continue
 
 	    ## 验证用户为ubuntu时，修改root密码与ubuntu用户密码相同
@@ -116,7 +116,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	            SALTRET.append({k:1})
 	         else:
 		    SALTRET.append({k:0})
-              logger.info('SALTRET: %s',SALTRET)
+              logger.info('%s, SALTRET: %s',username,SALTRET)
 	      self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
 	    else:
 	      SALT_FUN = 'state.sls'
@@ -126,17 +126,17 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	      ## ubuntu 用户修改root 密码失败暂未做处理   
 	      if ret_usertype == 0:
 	        retd = ChangePasswd(PACKAGE_DICT)
-	        logger.debug('The result of ChangePasswd: %s',retd)
+	        logger.debug('%s, The result of ChangePasswd: %s',username,retd)
 	        rete = sum(retd.values())
 
     	      ## host init
     	      client = SSHClient()
-              logger.debug("client.cmd\(tgt=%s,fun=%s, arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",TARGET,SALT_FUN,ROSTER_CONF,HOSTNAME_DICT)
+              logger.debug("%s, client.cmd\(tgt=%s,fun=%s, arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",username,TARGET,SALT_FUN,ROSTER_CONF,HOSTNAME_DICT)
     	      RET = client.cmd(tgt=TARGET,fun=SALT_FUN, arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',kwarg={'pillar':HOSTNAME_DICT,'ignore-host-keys':True})
-	      logger.debug('RET: %s',RET)
+	      logger.debug('%s, RET: %s',username,RET)
     	      #SALTRET = {}
               SALTRET = ret_process(RET,dtype='init')
-              logger.info('SALTRET: %s',SALTRET)
+              logger.info('%s, SALTRET: %s',username,SALTRET)
     	      #for elment in RET:
     	      #  SALTRET[elment] = json.dumps(RET[elment],indent=1)
 

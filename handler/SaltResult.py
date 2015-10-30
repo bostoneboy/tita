@@ -60,12 +60,12 @@ class SaltresultHandler(BaseHandler): #引入BaseHandler
 
         local = salt.client.LocalClient()
         self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=FUN,PERMISSION=permission)
-        logger.debug('salt.client.local.cmd: tgt=%s,fun=%s,arg=[%s],expr_form=%s,kwarg=%s',TARGET,FUN,COMMAND,EXPR_FORM,KWARG)
+        logger.debug('%s, salt.client.local.cmd: tgt=%s,fun=%s,arg=[%s],expr_form=%s,kwarg=%s',username,TARGET,FUN,COMMAND,EXPR_FORM,KWARG)
         SALTRET = local.cmd(tgt=TARGET,fun=FUN,arg=[COMMAND],expr_form=EXPR_FORM,kwarg=KWARG)
-        logger.debug('SALTRET0: %s',SALTRET)
+        logger.debug('%s, SALTRET0: %s',username,SALTRET)
         if FUN == 'state.sls':
           SALTRET = ret_process(SALTRET)
-        logger.debug('SALTRET: %s',SALTRET)
+        logger.debug('%s, SALTRET: %s',username,SALTRET)
             
 
 class SingleretHandler(SaltresultHandler):
@@ -77,7 +77,7 @@ class SingleretHandler(SaltresultHandler):
         username = self.get_secure_cookie('username')
         permission = permissiondict[username]['permission']
         PAGE = ''.join([id,'.html'])
-        logger.debug('SALTRESULT: ')
+        logger.debug('%s, SALTRESULT: ',username)
         logger.debug('Request %s',PAGE)
         self.render(PAGE,SALTRESULT=SALTRET )
 
