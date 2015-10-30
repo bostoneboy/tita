@@ -116,7 +116,8 @@ class ChangePWHandler(BaseHandler):
             userdict[username]['salt'] = salt
             userdict[username]['password'] = password
             userdict[username]['forcereset'] = 0
-	    logger.debug('Modify userdict: %s',userdict)
+	    #logger.debug('Modify userdict: %s',userdict)
+	    logger.debug('User %s change password success',username)
             Writeyaml(userdict,'db/user.db')
  	    self.redirect("/Redirect")
             
