@@ -1,0 +1,1 @@
+test: {host: 10.2.2.3, passwd: 1234Qwer, port: 22, user: root}
