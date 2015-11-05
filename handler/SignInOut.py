@@ -22,7 +22,8 @@ from logd import logger
 from readConfig import *
 from method.definex import *
 
-
+#global HINT
+#HINT = False
 class BaseHandler(tornado.web.RequestHandler): #BaseHandler
     def get_current_user(self):
         user = self.get_secure_cookie('username')
@@ -62,35 +63,39 @@ class SigninHandler(BaseHandler): #引入BaseHandler
         username = self.get_argument('username')	#获取form中username的值
         password = self.get_argument('password')	#获取form中password的值
         ip = self.request.remote_ip #获取来访者IP
+        userdict = Readyaml('db/user.db')
 	try: 
-            userdict = Readyaml('db/user.db')
             wdsalt = userdict[username]['salt']
-            wdpass = userdict[username]['password']
-            wdforcereset = userdict[username]['forcereset']
-            wdret = VerifyPassword(wdsalt,wdpass,password)
-	    if wdret == 0:
-		permission = permissiondict[username]['permission']
-                self.set_secure_cookie('username', username.encode('unicode_escape'),  expires_days=None) #same
-                self.set_secure_cookie('role', password.encode('unicode_escape'),  expires_days=None) #same
-                ip = self.request.remote_ip #获取来访者IP
-		logger.debug('User %s auth success',username)
+        except:
+            HINT = '用户名不存在，请重新输入'
+            logger.debug('User %s login failed, wrong username',username)            
+            self.render('login_form.html',HINT=HINT)
+            return
 
-                if wdforcereset == 1:
-		    logger.debug('User %s is forced to change password',username)
-                    self.redirect('/ChangePW')
-                else:
-                    self.redirect('/') 
+        wdpass = userdict[username]['password']
+        wdforcereset = userdict[username]['forcereset']
+        wdret = VerifyPassword(wdsalt,wdpass,password)
+	if wdret == 0:
+	    permission = permissiondict[username]['permission']
+            self.set_secure_cookie('username', username.encode('unicode_escape'),  expires_days=None) #same
+            self.set_secure_cookie('role', password.encode('unicode_escape'),  expires_days=None) #same
+            ip = self.request.remote_ip #获取来访者IP
+   	    logger.debug('User %s auth success',username)
+
+            if wdforcereset == 1:
+	        logger.debug('User %s is forced to change password',username)
+                self.redirect('/ChangePW')
+            else:
+                self.redirect('/') 
                 return #返回，按照官方文档的要求，在redirect之后需要写空的return，否则可能会有问题，实测确实会有问题
-	    else:
-		logger.debug('User %s login failed, wrong password',username)
-	        self.redirect('/Signin') #跳转回登录页面
-                return
-	except:
-	    logger.debug('User %s login failed, wrong username',username)
-	    self.redirect('/Signin')
+	else:
+            HINT = '密码错误，请重新输入'
+            logger.debug('User %s login failed, wrong password',username)
+            self.render('login_form.html',HINT=HINT)
             return
     def get(self): #HTTP GET方式
-        self.render('login_form.html') #渲染登录框HTML
+        HINT = False
+        self.render('login_form.html',HINT=HINT) #渲染登录框HTML
 
 class SignoutHandler(BaseHandler):  
     def get(self):  
