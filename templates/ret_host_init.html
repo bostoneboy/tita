@@ -1,11 +1,74 @@
-<p>{{SALTRESULT[0]}}</p>
-<!-- p class="hostiniterror" -->
-<p style="line-height:160%;word-spacing:20px">
-{% for k in SALTRESULT[1:] %}
-	{% if k.values()[0] == 1 %}
-		<span style="color:red;font-weight:bold">{{k.keys()[0]}}</span><br>
-	{% else %}
-		{{k.keys()[0]}}<br>
-	{% end %}
-{% end %}
+<script language="JavaScript" type="text/JavaScript">
+	function showdiv(targetid,objN){
+	   
+	      var target=document.getElementById(targetid);
+	      var clicktext=document.getElementById(objN)
+	 
+	            if (target.style.display=="block"){
+	                target.style.display="none";
+	                clicktext.innerText="点击查看详细信息";
+	           clicktext.style.background="#fff";
+	 
+	            } else {
+	                target.style.display="block";
+	                clicktext.innerText='关闭详细信息信息';
+	clicktext.style.background="green";
+	            }
+	}
+</script>
+
+<style type="text/css">
+body { font: normal 14px "宋体" }
+a { text-decoration: none;cursor: hand; cursor:pointer; }
+#showtextMRJ-iOS-Gamesrv-01 { cursor: hand; cursor:pointer;}
+#showtext[a-z] { cursor: hand; cursor:pointer;}
+#contentMRJ-iOS-Gamesrv-01 { margin-top: 10px; width:100%; border: 1px solid #CCC; background: #F1F1F1; padding: 15px; }
+#content[a-z] { margin-top: 10px; width: 470px; border: 1px solid #CCC; background: #F1F1F1; padding: 15px; }
+.none { display: none; }
+</style>
+
+
+
+<p>
+   <table border="0" cellpadding="8"> 
+   {% if ECOUNT == 0 %}
+       {% for element in SALTRESULT %}
+       <!--
+          <p>{{element}}</p>
+          <div id='tab'>
+             <pre>{{SALTRESULT[element]}}</pre>
+          </div>
+       -->
+       
+            <tr>
+          	   <td style="text-align:right;">{{element}}</td>
+    	   <td style="text-align:left;font-weight:bold">
+          	   {% if SALTRESULT[element]['result'] == True %}
+                   成功
+          	   {% elif SALTRESULT[element]['result'] == 'NA' %}
+          	       此机器勿需执行
+          	   {% elif SALTRESULT[element]['result'] == False %}
+          	       <span style="color:red;font-weight:bold">失败</span>，
+    	          <a id="showtext{{element}}" onClick="showdiv('content{{element}}','showtext{{element}}')">点此查看详细信息</a>
+    		  <div id="content{{element}}" class="none"><pre>{{SALTRESULT[element]['detail']}}</pre></div>
+          	   {% end %}
+    	   </td>
+    	</tr>
+       
+       {% end %}
+   {% else %} 
+        <p>{{SALTRESULT[0]}}</p>
+        <!-- p class="hostiniterror" -->
+        <p style="line-height:160%;word-spacing:20px">
+        {% for k in SALTRESULT[1:] %}
+        	{% if k.values()[0] == 1 %}
+        		<span style="color:red;font-weight:bold">{{k.keys()[0]}}</span><br>
+        	{% else %}
+        		{{k.keys()[0]}}<br>
+        	{% end %}
+        {% end %}
+        </p>
+   {% end %}
+
+   </table>
 </p>

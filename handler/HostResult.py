@@ -34,6 +34,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
         username = self.get_secure_cookie('username')
         permission = permissiondict[username]['permission']
 	global SALTRET
+	global ecount
 	SALTRET = 'Just init value'
 
         if id == 'server_initialization':
@@ -55,10 +56,10 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	      SALTRET.append({j:1})
 	    else:
 	      SALTRET.append({j:0})
-	  logger.debug('%s, SALTRET: %s',username,SALTRET)
+	  logger.debug('%s, ecount: %s SALTRET: %s',username,ecount,SALTRET)
 	  if ecount > 0:
 	     SALTRET[0] = '下列标红的行所提供之信息不完整，请修正后重新提交: '
-	     self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
+	     self.render('result.html',SALTCOMMAND=SALTCMD,ECOUNT=ecount,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
 
 	  else:
 	    ret_usertype = 0
@@ -108,6 +109,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	    ## 验证用户为ubuntu时，修改root密码与ubuntu用户密码相同
 	    ## ubuntu 用户修改root 密码失败暂未做处理   
 	    if ret_usertype == 1:
+              ecount = -1
 	      SALTRET = []
 	      SALTRET.append('下列标红的服务器ssh登录失败，请修正后重新提交：')
 	      for j in  PACKAGE_LINE:
@@ -116,11 +118,11 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 	            SALTRET.append({k:1})
 	         else:
 		    SALTRET.append({k:0})
-              logger.info('%s, SALTRET: %s',username,SALTRET)
-	      self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
+              logger.info('%s, ecount: %s SALTRET: %s',username,ecount,SALTRET)
+	      self.render('result.html',SALTCOMMAND=SALTCMD,ECOUNT=ecount,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
 	    else:
-	      SALT_FUN = 'state.sls'
-              self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
+	      #SALT_FUN = 'state.sls'
+              self.render('result.html',SALTCOMMAND=SALTCMD,ECOUNT=ecount,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
 
 	      ## 验证用户为ubuntu时，修改root密码与ubuntu用户密码相同
 	      ## ubuntu 用户修改root 密码失败暂未做处理   
@@ -131,18 +133,14 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
 
     	      ## host init
     	      client = SSHClient()
-              logger.debug("%s, client.cmd\(tgt=%s,fun=%s, arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",username,TARGET,SALT_FUN,ROSTER_CONF,HOSTNAME_DICT)
-    	      RET = client.cmd(tgt=TARGET,fun=SALT_FUN, arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',kwarg={'pillar':HOSTNAME_DICT,'ignore-host-keys':True})
-	      logger.debug('%s, RET: %s',username,RET)
+              logger.debug("%s, client.cmd\(tgt=%s,fun='state.sls', arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",username,TARGET,ROSTER_CONF,HOSTNAME_DICT)
+    	      RET = client.cmd(tgt=TARGET,fun='state.sls', arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',kwarg={'pillar':HOSTNAME_DICT,'ignore-host-keys':True})
+	      logger.debug('%s, ecount: %d RET: %s',username,ecount,RET)
     	      #SALTRET = {}
               SALTRET = ret_process(RET,dtype='init')
               logger.info('%s, SALTRET: %s',username,SALTRET)
     	      #for elment in RET:
     	      #  SALTRET[elment] = json.dumps(RET[elment],indent=1)
-
-        #logger.info('Result of SALTCMD: %s',RET)
-        #self.render('result.html',SALTCOMMAND=SALTCMD,SALTRESULT=SALTRET,FLAGID=id,MENUDICT=menudict,SALTFUNCTION=SALT_FUN,PERMISSION=permission)
-	#logger.info('Request /result.html')
 
 class PageretHandler(HostresultHandler):
     @tornado.web.authenticated
@@ -154,4 +152,4 @@ class PageretHandler(HostresultHandler):
         permission = permissiondict[username]['permission']
         PAGE = ''.join([id,'.html'])
         logger.debug('Request %s',PAGE)
-        self.render(PAGE,SALTRESULT=SALTRET )
+        self.render(PAGE,ECOUNT=ecount,SALTRESULT=SALTRET)

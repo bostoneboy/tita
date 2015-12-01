@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pexpect import pxssh
+import pxssh
 import threading 
 #from logd import logger
 
@@ -21,14 +21,21 @@ class SshLoginVirifi(threading.Thread):
                     "StrictHostKeyChecking": "no",
                     "UserKnownHostsFile": "/dev/null"})
 	    #s = pxssh.pxssh()
+            #s.SSH_OPTS += " -o StrictHostKeyChecking=no UserKnownHostsFile=/dev/null"
             s.login (self.server_name_,self.user_, self.passwd_, original_prompt='[$#>]')
-	    #s.sendline ('hostname;uptime')
+	    s.sendline ('hostname;uptime')
             #s.prompt()
 	    #ret = s.before
+            print(s.before)
             s.logout()
             ret = 0
-	except:
+            print('ret: 0')
+	except pxssh.ExceptionPxssh as e:
+	#except:
             ret = 1
+            print("pxssh failed on login: ")
+            #print(e)
+            print('ret: 1')
 
         self.result_= ret
         return self.result_   
@@ -45,9 +52,7 @@ class SshChangePasswd(threading.Thread):
         self.setName(self.server_name_) # set the name of thread
 
         try:
-            s = pxssh.pxssh(options={
-                    "StrictHostKeyChecking": "no",
-                    "UserKnownHostsFile": "/dev/null"})
+            s = pxssh.pxssh()
             s.login (self.server_name_,self.user_, self.passwd_, original_prompt='[$#>]')
             cmdj = 'echo root:' + self.passwd_ + ' | sudo chpasswd'
 	    #logger.debug('SSHandle.cmdj: %s',cmdj)
@@ -101,6 +106,10 @@ def ChangePasswd(HOSTDICT):
     return xret
 
 #if __name__ == "__main__":
-#    HOSTDICT = {'RMAN-PHP-05': {'passwd': '1234Qwer', 'host': '10.251.236.163', 'user': 'ubuntu', 'port': 22}}
-#    print LoginVirifi(HOSTDICT)
+#    HOSTDICT = {'TEST-WEB3':{'host':'10.143.90.100','user':'ubuntu','passwd':'1234Qwer'},'TEST-WEB1':{'host':'10.143.88.152','user':'ubuntu','passwd':'1234Qwer'}}
+#    #print LoginVirifi(HOSTDICT)
 #    print ChangePasswd(HOSTDICT)
+
+PACKAGE_DICT = {'RMAN-PHP-05': {'passwd': '1234Qwer', 'host': '10.251.236.163', 'user': 'ubuntu', 'port': 22}}
+#PACKAGE_DICT = {'RMAN-PHP-04': {'passwd': '1234Qwer', 'host': '10.104.40.121', 'user': 'root', 'port': 22}}
+print LoginVirifi(PACKAGE_DICT) 
