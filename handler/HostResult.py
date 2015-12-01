@@ -134,7 +134,7 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
     	      ## host init
     	      client = SSHClient()
               logger.debug("%s, client.cmd\(tgt=%s,fun='state.sls', arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",username,TARGET,ROSTER_CONF,HOSTNAME_DICT)
-    	      RET = client.cmd(tgt=TARGET,fun='state.sls', arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',kwarg={'pillar':HOSTNAME_DICT,'ignore-host-keys':True})
+    	      RET = client.cmd(tgt=TARGET,fun='state.sls', arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',ignore_host_keys=True,kwarg={'pillar':HOSTNAME_DICT})
 	      logger.debug('%s, ecount: %d RET: %s',username,ecount,RET)
     	      #SALTRET = {}
               SALTRET = ret_process(RET,dtype='init')
