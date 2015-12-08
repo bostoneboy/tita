@@ -134,11 +134,14 @@ class HostresultHandler(BaseHandler): #引入BaseHandler
     	      ## host init
     	      client = SSHClient()
               logger.debug("%s, client.cmd\(tgt=%s,fun='state.sls', arg=['inithost'],roster_file=%s,expr_form=\'list\',kwarg={'pillar':%s,}\)",username,TARGET,ROSTER_CONF,HOSTNAME_DICT)
-    	      RET = client.cmd(tgt=TARGET,fun='state.sls', arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',ignore_host_keys=True,kwarg={'pillar':HOSTNAME_DICT})
+              # rand_thin_dir=True or -W is for fixing the salt-ssh problem when minion is python2.7 and master is python2.6 can cause error below:
+              # 'AttributeError: 'module' object has no attribute 'fromstringlist
+              # refer https://github.com/saltstack/salt/issues/26584
+    	      RET = client.cmd(tgt=TARGET,fun='state.sls', arg=['inithost'],roster_file=ROSTER_CONF,expr_form='list',ignore_host_keys=True,rand_thin_dir=True,kwarg={'pillar':HOSTNAME_DICT})
 	      logger.debug('%s, ecount: %d RET: %s',username,ecount,RET)
-    	      #SALTRET = {}
               SALTRET = ret_process(RET,dtype='init')
               logger.info('%s, SALTRET: %s',username,SALTRET)
+
     	      #for elment in RET:
     	      #  SALTRET[elment] = json.dumps(RET[elment],indent=1)
 
