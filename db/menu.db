@@ -1,0 +1,20 @@
+0:
+  服务器:
+    服务器初始化: server_initialization
+1:
+  美人记:
+    美人记群组操作: mrj_nodegroup
+    美人记主机操作: mrj_host
+    美人记拉取文件: mrj_pullfile
+2:
+  X觉醒:
+    X觉醒更新: tgame_update
+    X觉醒缓存重启: tgame_memcached_restart
+3:
+  X觉醒运营:
+    X觉醒通告更新: tgame_change_notice
+4:
+  雷神之城:
+    重启Resin: leishen_resin
+    重启业务进程: leishen_process
+    文件更新: leishen_update_package

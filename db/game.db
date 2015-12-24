@@ -1,0 +1,180 @@
+mrj_pullfile:
+  desc:
+  target:
+    - MRJ-OPS-ALL-DB
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    root
+  cmd0:
+    - /data/script/pullfile.sh
+  cmd1:
+    - textfield
+
+mrj_nodegroup:
+  target:
+    - mrj-android
+    - mrj-ios
+  targettype:
+    nodegroup 
+  cmdtype:
+    state.sls
+  runas:
+    na
+  cmd0:
+    - restart
+    - update
+    - copy
+    - start
+    - stop
+    - addcron
+    - delcron
+  cmd1: ['AccountServer', 'ActiveServer', 'CacheServer', 'CacheServer2', 'ChatServer', 'CommDbAccess', 'ConfigureServer', 'ConfigureServer2', 'ContainerServer', 'ContainerServer2', 'DirServer', 'FriendShipServer', 'FriendShipServer2', 'GameServer', 'GameServer2', 'GdtServer', 'HonorServer', 'HotDataServer', 'InterService', 'LeagueServer', 'LeagueServer2', 'LoginServer', 'MachineMatchServer', 'MachineMatchServer2', 'MsgServer', 'MsgServer2', 'NameServer', 'PeerlessServer', 'ProxyServer', 'RankServer', 'RouterServer', 'SessionServer', 'ShopServer', 'ShopServer2', 'SpeakerServer', 'TaskServer', 'TaskServer2', 'RankMatchServer', 'RankMatchServer2', 'RankPkRouterServer', 'RankPkServer','RankPkServer2', 'RankPkServer3', 'RankPkServer4', 'RankPkServer5', 'RankPkServer6', 'RankPkServer7', 'RankPkServer8', 'RankPkServer9', 'RankPkServer10', 'RankPkServer11', 'RankPkServer12', 'RankPkServer13', 'RankPkServer14','RankPkServer15','webserver','Resin']
+
+mrj_host:
+  target:
+    - MRJ-OPS-ALL-DB
+    - MRJ-Gamesrv-01
+    - MRJ-Gamesrv-02
+    - MRJ-Gamesrv-03
+    - MRJ-Gamesrv-04
+    - MRJ-Gamesrv-05
+    - MRJ-Gamesrv-06
+    - MRJ-Memcached-01
+    - MRJ-Memcached-02
+    - MRJ-DB
+    - MRJ-DB-slave
+    - MRJ-DB-02
+    - MRJ-DB-02-slave
+    - MRJ-TAFLOG-01
+    - MRJ-TAFLOG-02
+    - MRJ-GM-DB
+    - MRJ-iOS-Gamesrv-01
+    - MRJ-iOS-Gamesrv-02
+    - MRJ-iOS-Memcached-01
+    - MRJ-iOS-Memcached-02
+    - MRJ-iOS-TAFLOG
+    - MRJ-iOS-DB-01
+    - MRJ-iOS-DB-01-slave
+  targettype:
+    list
+  cmdtype:
+    state.sls
+  runas:
+    na
+  cmd0:
+    - restart
+    - update
+    - copy
+    - start
+    - stop
+    - addcron
+    - delcron
+  cmd1: ['AccountServer', 'ActiveServer', 'CacheServer', 'CacheServer2', 'ChatServer', 'CommDbAccess', 'ConfigureServer', 'ConfigureServer2', 'ContainerServer', 'ContainerServer2', 'DirServer', 'FriendShipServer', 'FriendShipServer2', 'GameServer', 'GameServer2', 'GdtServer', 'HonorServer', 'HotDataServer', 'InterService', 'LeagueServer', 'LeagueServer2', 'LoginServer', 'MachineMatchServer', 'MachineMatchServer2', 'MsgServer', 'MsgServer2', 'NameServer', 'PeerlessServer', 'ProxyServer', 'RankServer', 'RouterServer', 'SessionServer', 'ShopServer', 'ShopServer2', 'SpeakerServer', 'TaskServer', 'TaskServer2', 'RankMatchServer', 'RankMatchServer2', 'RankPkRouterServer', 'RankPkServer','RankPkServer2', 'RankPkServer3', 'RankPkServer4', 'RankPkServer5', 'RankPkServer6', 'RankPkServer7', 'RankPkServer8', 'RankPkServer9', 'RankPkServer10', 'RankPkServer11', 'RankPkServer12', 'RankPkServer13', 'RankPkServer14','RankPkServer15','webserver','Resin']
+
+tgame_update:
+  target:
+    - TGAME-OPS
+    - TGAME-CESHI
+    - TGAME-Yace
+    - TGAME-Fengce
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    ledou00
+  cmd0:
+    - /data/script/update_tgame.sh
+  cmd1:
+    - stop
+    - start
+    - update
+  cmd2:
+    - textfield
+
+tgame_memcached_restart:
+  target:
+    - TGAME-OPS
+    - TGAME-CESHI
+    - TGAME-Yace
+    - TGAME-Fengce
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    ledou00
+  cmd0:
+    - /etc/init.d/memcached
+  cmd1:
+    - restart
+    - stop
+    - start
+
+tgame_change_notice:
+  target:
+    - TGAME-CESHI
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    ledou00
+  cmd0:
+    - /data/script/gen_notice.sh
+  cmd1:
+    - textarea
+
+leishen_resin:
+  target:
+    - Leishen-ceshi
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    root
+  cmd0:
+    - /usr/local/resin/bin/resinctl
+  cmd1:
+    - restart
+    - stop
+    - start
+
+leishen_process:
+  target:
+    - Leishen-ceshi
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    ledou00
+  cmd0:
+    - /data/script/update_process.sh
+  cmd1:
+    - stop
+    - start
+  cmd2:
+    - all
+    - main
+    - logic
+    - api
+    - battle
+
+leishen_update_package:
+  target:
+    - Leishen-ceshi
+  targettype:
+    list
+  cmdtype:
+    cmd.run
+  runas:
+    ledou00
+  cmd0:
+    - /data/script/update_file.sh
+  cmd1:
+    - textfield
